@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  superadmin
+  admin
+  publisher
+  seo
+  user
+}
+
+enum ArticleStatus {
+  draft
+  published
+}
+
+enum CommentStatus {
+  visible
+  hidden
+}
+
+enum VideoType {
+  embed
+  upload
+}
+
+type RelatedImage {
+  url     String
+  caption String?
+  alt     String?
+  order   Int     @default(0)
+}
+
+type ArticleVideo {
+  type     VideoType
+  url      String
+  provider String?
+}
+
+type ArticleSeo {
+  metaTitle       String?
+  metaDescription String?
+  canonicalUrl    String?
+  ogImage         String?
+}
+
+model User {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  email        String   @unique
+  passwordHash String
+  displayName  String
+  photoUrl     String?
+  role         Role     @default(user)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  articles Article[]
+  comments Comment[]
+}
+
+model Category {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  slug  String @unique
+  image String
+
+  articles Article[]
+}
+
+model Tag {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  slug String @unique
+}
+
+model Article {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  slug          String         @unique
+  excerpt       String?
+  body          String
+  coverImage    String?
+  relatedImages RelatedImage[]
+  video         ArticleVideo?
+  status        ArticleStatus  @default(draft)
+  publishedAt   DateTime?
+  isHeadline    Boolean        @default(false)
+  isFeatured    Boolean        @default(false)
+  seo           ArticleSeo?
+  tagIds        String[]       @db.ObjectId
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  authorId   String   @db.ObjectId
+  author     User     @relation(fields: [authorId], references: [id])
+  categoryId String   @db.ObjectId
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  comments Comment[]
+
+  @@index([status, publishedAt])
+}
+
+model Comment {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  body      String
+  status    CommentStatus @default(visible)
+  createdAt DateTime      @default(now())
+
+  articleId String  @db.ObjectId
+  article   Article @relation(fields: [articleId], references: [id])
+  userId    String  @db.ObjectId
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@index([articleId])
+}
+
+model StaticPage {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  slug            String   @unique
+  body            String
+  published       Boolean  @default(true)
+  metaTitle       String?
+  metaDescription String?
+  ogImage         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SeoSettings {
+  id                 String  @id @default(auto()) @map("_id") @db.ObjectId
+  siteName           String  @default("Portal Media")
+  titleTemplate      String  @default("%s | Portal Media")
+  defaultDescription String  @default("Berita terbaru dan terpercaya.")
+  defaultOgImage     String?
+  indexingEnabled    Boolean @default(true)
+  singleton          Boolean @unique @default(true)
+}
+
+model VisitAggregate {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  date     String
+  pageType String   @default("page")
+  count    Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, pageType])
+}

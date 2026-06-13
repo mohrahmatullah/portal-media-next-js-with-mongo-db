@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "noEmit": false,
+    "jsx": "react"
+  },
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "include": ["seed.ts"]
+}

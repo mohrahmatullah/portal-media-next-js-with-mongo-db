@@ -1,0 +1,44 @@
+{
+  "name": "portal-media",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "db:check": "ts-node -P prisma/tsconfig.json src/lib/db-preflight.ts",
+    "predev": "npm run db:check",
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "eslint src",
+    "postinstall": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "npm run db:check && prisma db seed"
+  },
+  "prisma": {
+    "seed": "ts-node -P prisma/tsconfig.json prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "bcryptjs": "^2.4.3",
+    "clsx": "^2.1.1",
+    "ioredis": "^5.4.1",
+    "next": "^16.2.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "recharts": "^2.12.7",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.14.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.9",
+    "postcss": "^8.4.47",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^3.4.13",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}

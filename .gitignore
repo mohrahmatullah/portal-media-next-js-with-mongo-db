@@ -1,0 +1,15 @@
+/node_modules
+/.next
+/out
+/build
+.env
+.env*.local
+*.tsbuildinfo
+next-env.d.ts
+/public/uploads/*
+!/public/uploads/.gitkeep
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun-lock.yaml
+.DS_Store
