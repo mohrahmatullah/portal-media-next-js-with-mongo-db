@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { requirePermission } from "@/lib/auth/context";
 import prisma from "@/lib/prisma";
 import CategoryForm from "@/components/dashboard/CategoryForm";
@@ -32,15 +33,23 @@ export default async function CategoriesPage() {
                   <p className="font-medium">{c.name}</p>
                   <p className="text-xs text-gray-400">{c._count.articles} berita</p>
                 </div>
-                <form action={deleteCategory.bind(null, c.id)}>
-                  <button
-                    className="text-xs text-red-600 hover:underline disabled:text-gray-300"
-                    disabled={c._count.articles > 0}
-                    title={c._count.articles > 0 ? "Masih ada berita pada kategori ini" : "Hapus"}
+                <div className="flex items-center gap-3">
+                  <Link
+                    href={`/dashboard/categories/${c.id}/edit`}
+                    className="text-xs text-brand-600 hover:underline"
                   >
-                    Hapus
-                  </button>
-                </form>
+                    Edit
+                  </Link>
+                  <form action={deleteCategory.bind(null, c.id)}>
+                    <button
+                      className="text-xs text-red-600 hover:underline disabled:text-gray-300"
+                      disabled={c._count.articles > 0}
+                      title={c._count.articles > 0 ? "Masih ada berita pada kategori ini" : "Hapus"}
+                    >
+                      Hapus
+                    </button>
+                  </form>
+                </div>
               </div>
             ))}
             {categories.length === 0 && <p className="text-sm text-gray-400">Belum ada kategori.</p>}
